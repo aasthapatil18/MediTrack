@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediTrack - Medicine Expiry & Reminder Management</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="app">
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <div class="brand-icon">✚</div>
+                <div>
+                    <h2>MediTrack</h2>
+                    <span>Medicine Manager</span>
+                </div>
+            </div>
+
+            <nav class="navigation">
+                <button class="nav-item active" data-page="dashboard">
+                    <span class="nav-icon">⌂</span>
+                    <span>Dashboard</span>
+                </button>
+
+                <button class="nav-item" data-page="medicines">
+                    <span class="nav-icon">▣</span>
+                    <span>Medicines</span>
+                </button>
+
+                <button class="nav-item" data-page="reminders">
+                    <span class="nav-icon">◷</span>
+                    <span>Reminders</span>
+                </button>
+
+                <button class="nav-item" data-page="alerts">
+                    <span class="nav-icon">!</span>
+                    <span>Expiry Alerts</span>
+                </button>
+
+                <button class="nav-item" data-page="reports">
+                    <span class="nav-icon">▤</span>
+                    <span>Reports</span>
+                </button>
+
+                <button class="nav-item" data-page="profile">
+                    <span class="nav-icon">◉</span>
+                    <span>Profile</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-info">
+                    <span>●</span>
+                    <div>
+                        <strong>Frontend Mode</strong>
+                        <small>Data saved locally</small>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Area -->
+        <main class="main-content">
+
+            <!-- Header -->
+            <header class="topbar">
+                <button class="mobile-menu" id="mobileMenu" aria-label="Open menu">
+                    ☰
+                </button>
+
+                <div class="topbar-title">
+                    <span id="currentPageLabel">Dashboard</span>
+                </div>
+
+                <div class="topbar-actions">
+                    <div class="date-display" id="currentDate"></div>
+                    <div class="profile-mini">U</div>
+                </div>
+            </header>
+
+            <!-- Dashboard -->
+            <section class="page active" id="dashboardPage">
+
+                <div class="page-header hero-header">
+                    <div>
+                        <span class="eyebrow">MEDICINE MANAGEMENT</span>
+                        <h1>Welcome to MediTrack</h1>
+                        <p>Monitor your medicines, expiry dates and reminders in one place.</p>
+                    </div>
+
+                    <button class="primary-btn" id="dashboardAddMedicine">
+                        <span>＋</span> Add Medicine
+                    </button>
+                </div>
+
+                <div class="stats-grid">
+
+                    <div class="stat-card">
+                        <div class="stat-icon medicines-icon">▣</div>
+                        <div>
+                            <span>Total Medicines</span>
+                            <strong id="totalMedicines">0</strong>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon warning-icon">!</div>
+                        <div>
+                            <span>Expiring Soon</span>
+                            <strong id="expiringSoon">0</strong>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon danger-icon">×</div>
+                        <div>
+                            <span>Expired Medicines</span>
+                            <strong id="expiredMedicines">0</strong>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon reminder-icon">◷</div>
+                        <div>
+                            <span>Active Reminders</span>
+                            <strong id="activeReminders">0</strong>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="dashboard-grid">
+
+                    <!-- Today's Schedule -->
+                    <div class="content-card">
+                        <div class="card-header">
+                            <div>
+                                <h2>Today's Medicine Schedule</h2>
+                                <p>Scheduled medicine reminders for today.</p>
+                            </div>
+                            <button class="text-btn" data-page-link="reminders">View All</button>
+                        </div>
+
+                        <div id="todaySchedule" class="schedule-list">
+                        </div>
+                    </div>
+
+                    <!-- Dashboard Alerts -->
+                    <div class="content-card">
+                        <div class="card-header">
+                            <div>
+                                <h2>Expiry Alerts</h2>
+                                <p>Medicines requiring attention.</p>
+                            </div>
+                            <button class="text-btn" data-page-link="alerts">View All</button>
+                        </div>
+
+                        <div id="dashboardAlerts" class="alert-list">
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- Medicines -->
+            <section class="page" id="medicinesPage">
+
+                <div class="page-header">
+                    <div>
+                        <span class="eyebrow">MEDICINE MANAGEMENT</span>
+                        <h1>Medicines</h1>
+                        <p>Add, edit, search and manage your medicines.</p>
+                    </div>
+
+                    <div class="header-buttons">
+                        <button class="secondary-btn" id="scanMedicineBtn">
+                            ◉ Scan Medicine
+                        </button>
+
+                        <button class="primary-btn" id="addMedicineBtn">
+                            ＋ Add Medicine
+                        </button>
+                    </div>
+                </div>
+
+                <div class="toolbar">
+                    <div class="search-box">
+                        <span>⌕</span>
+                        <input
+                            type="text"
+                            id="medicineSearch"
+                            placeholder="Search medicine..."
+                        >
+                    </div>
+
+                    <div class="sort-box">
+                        <label for="medicineSort">Sort by</label>
+                        <select id="medicineSort">
+                            <option value="name-asc">Medicine Name A-Z</option>
+                            <option value="name-desc">Medicine Name Z-A</option>
+                            <option value="expiry-asc">Expiry Date - Earliest</option>
+                            <option value="expiry-desc">Expiry Date - Latest</option>
+                            <option value="quantity-asc">Quantity - Low to High</option>
+                            <option value="quantity-desc">Quantity - High to Low</option>
+                            <option value="status">Status</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-card">
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Medicine</th>
+                                    <th>Manufacturer</th>
+                                    <th>Batch Number</th>
+                                    <th>Manufacturing</th>
+                                    <th>Expiry</th>
+                                    <th>Quantity</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="medicineTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="medicineEmpty" class="empty-state hidden">
+                        <div class="empty-icon">▣</div>
+                        <h3>No medicines found</h3>
+                        <p>Add a medicine or change your search.</p>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Reminders -->
+            <section class="page" id="remindersPage">
+
+                <div class="page-header">
+                    <div>
+                        <span class="eyebrow">SCHEDULE</span>
+                        <h1>Reminders</h1>
+                        <p>Manage your medicine reminders.</p>
+                    </div>
+
+                    <button class="primary-btn" id="addReminderBtn">
+                        ＋ Add Reminder
+                    </button>
+                </div>
+
+                <div id="remindersList" class="reminder-grid">
+                </div>
+
+                <div id="remindersEmpty" class="empty-state hidden">
+                    <div class="empty-icon">◷</div>
+                    <h3>No reminders added</h3>
+                    <p>Create a reminder to keep track of your medicines.</p>
+                </div>
+
+            </section>
+
+            <!-- Expiry Alerts -->
+            <section class="page" id="alertsPage">
+
+                <div class="page-header">
+                    <div>
+                        <span class="eyebrow">MONITORING</span>
+                        <h1>Expiry Alerts</h1>
+                        <p>Monitor expired and soon-to-expire medicines.</p>
+                    </div>
+                </div>
+
+                <div class="alert-summary-grid">
+
+                    <div class="alert-summary-card expired-summary">
+                        <div class="summary-number" id="alertExpiredCount">0</div>
+                        <div>
+                            <h3>Expired Medicines</h3>
+                            <p>Medicines past their expiry month.</p>
+                        </div>
+                    </div>
+
+                    <div class="alert-summary-card soon-summary">
+                        <div class="summary-number" id="alertSoonCount">0</div>
+                        <div>
+                            <h3>Medicines Expiring Soon</h3>
+                            <p>Medicines expiring within 3 months.</p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="alert-section">
+                    <div class="section-heading">
+                        <h2>Expired Medicines</h2>
+                    </div>
+
+                    <div class="table-card">
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Medicine Name</th>
+                                        <th>Batch Number</th>
+                                        <th>Expiry Month/Year</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="expiredTableBody">
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div id="expiredEmpty" class="empty-state small-empty">
+                            <div class="empty-icon">✓</div>
+                            <h3>No expired medicines</h3>
+                            <p>Your medicines are currently within their expiry dates.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert-section">
+                    <div class="section-heading">
+                        <h2>Medicines Expiring Soon</h2>
+                    </div>
+
+                    <div class="table-card">
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Medicine Name</th>
+                                        <th>Batch Number</th>
+                                        <th>Expiry Month/Year</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="soonTableBody">
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div id="soonEmpty" class="empty-state small-empty">
+                            <div class="empty-icon">✓</div>
+                            <h3>No medicines expiring soon</h3>
+                            <p>There are no medicines expiring within the next 3 months.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Reports -->
+            <section class="page" id="reportsPage">
+
+                <div class="page-header">
+                    <div>
+                        <span class="eyebrow">REPORTING</span>
+                        <h1>Reports</h1>
+                        <p>View a summary of your medicine records.</p>
+                    </div>
+
+                    <button class="primary-btn" id="printReportBtn">
+                        ⎙ Print Report
+                    </button>
+                </div>
+
+                <div class="report-summary-grid">
+
+                    <div class="report-card">
+                        <span>Total Medicines</span>
+                        <strong id="reportTotal">0</strong>
+                    </div>
+
+                    <div class="report-card">
+                        <span>Safe Medicines</span>
+                        <strong id="reportSafe">0</strong>
+                    </div>
+
+                    <div class="report-card">
+                        <span>Expiring Soon</span>
+                        <strong id="reportSoon">0</strong>
+                    </div>
+
+                    <div class="report-card">
+                        <span>Expired Medicines</span>
+                        <strong id="reportExpired">0</strong>
+                    </div>
+
+                </div>
+
+                <div class="content-card report-card-container">
+                    <div class="card-header">
+                        <div>
+                            <h2>Medicine Report</h2>
+                            <p>Current medicine information and expiry status.</p>
+                        </div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Medicine</th>
+                                    <th>Manufacturer</th>
+                                    <th>Batch Number</th>
+                                    <th>Manufacturing Date</th>
+                                    <th>Expiry Date</th>
+                                    <th>Quantity</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Profile -->
+            <section class="page" id="profilePage">
+
+                <div class="page-header">
+                    <div>
+                        <span class="eyebrow">ACCOUNT</span>
+                        <h1>Profile</h1>
+                        <p>Manage your personal profile information.</p>
+                    </div>
+                </div>
+
+                <div class="profile-layout">
+
+                    <div class="profile-intro">
+                        <div class="large-profile-icon" id="profileInitial">U</div>
+                        <h2 id="profileDisplayName">User</h2>
+                        <p>Your profile information is stored locally in this browser.</p>
+                    </div>
+
+                    <div class="content-card profile-form-card">
+
+                        <form id="profileForm">
+
+                            <div class="form-grid">
+
+                                <div class="form-group">
+                                    <label for="profileName">Name</label>
+                                    <input type="text" id="profileName" placeholder="Enter your name">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="profileAge">Age</label>
+                                    <input type="number" id="profileAge" min="1" max="120" placeholder="Enter your age">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="profileGender">Gender</label>
+                                    <select id="profileGender">
+                                        <option value="">Select Gender</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Other">Other</option>
+                                        <option value="Prefer not to say">Prefer not to say</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="profileLocation">Location</label>
+                                    <input type="text" id="profileLocation" placeholder="Enter your location">
+                                </div>
+
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="primary-btn">
+                                    Save Profile
+                                </button>
+                            </div>
+
+                            <div id="profileMessage" class="success-message hidden">
+                                Profile saved successfully.
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+    </div>
+
+
+    <!-- Add/Edit Medicine Modal -->
+    <div class="modal-overlay" id="medicineModal">
+        <div class="modal large-modal">
+
+            <div class="modal-header">
+                <div>
+                    <span class="eyebrow">MEDICINE</span>
+                    <h2 id="medicineModalTitle">Add Medicine</h2>
+                </div>
+
+                <button class="close-btn" data-close-modal="medicineModal">×</button>
+            </div>
+
+            <form id="medicineForm">
+
+                <input type="hidden" id="medicineId">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label for="medicineName">Medicine Name <span>*</span></label>
+                        <input type="text" id="medicineName" placeholder="e.g. Paracetamol">
+                        <small class="field-error" id="medicineNameError"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="manufacturer">Manufacturer <span>*</span></label>
+                        <input type="text" id="manufacturer" placeholder="e.g. Cipla Ltd.">
+                        <small class="field-error" id="manufacturerError"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="genericName">Generic Name</label>
+                        <input type="text" id="genericName" placeholder="Enter generic name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="strength">Strength <span>*</span></label>
+                        <input type="text" id="strength" placeholder="e.g. 650 mg">
+                        <small class="field-error" id="strengthError"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="medicineFormType">Form <span>*</span></label>
+                        <select id="medicineFormType">
+                            <option value="">Select Form</option>
+                            <option value="Tablet">Tablet</option>
+                            <option value="Capsule">Capsule</option>
+                            <option value="Syrup">Syrup</option>
+                            <option value="Injection">Injection</option>
+                            <option value="Cream">Cream</option>
+                            <option value="Ointment">Ointment</option>
+                            <option value="Drops">Drops</option>
+                            <option value="Powder">Powder</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <small class="field-error" id="medicineFormTypeError"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="manufacturingDate">Manufacturing Date <span>*</span></label>
+                        <input type="month" id="manufacturingDate">
+                        <small class="field-error" id="manufacturingDateError"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="expiryDate">Expiry Date <span>*</span></label>
+                        <input type="month" id="expiryDate">
+                        <small class="field-error" id="expiryDateError"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quantity">Quantity <span>*</span></label>
+                        <input type="number" id="quantity" min="0" step="1" placeholder="e.g. 100">
+                        <small class="field-error" id="quantityError"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="batchNumber">Batch Number <span>*</span></label>
+                        <input type="text" id="batchNumber" placeholder="e.g. PCM650A24">
+                        <small class="field-error" id="batchNumberError"></small>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="storageCondition">Storage Condition</label>
+                        <input type="text" id="storageCondition" placeholder="e.g. Store in a cool, dry place">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="uses">Uses</label>
+                        <textarea id="uses" rows="3" placeholder="Enter medicine uses"></textarea>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="precautions">Precautions</label>
+                        <textarea id="precautions" rows="3" placeholder="Enter precautions"></textarea>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="sideEffects">Side Effects</label>
+                        <textarea id="sideEffects" rows="3" placeholder="Enter side effects"></textarea>
+                    </div>
+
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="secondary-btn" data-close-modal="medicineModal">
+                        Cancel
+                    </button>
+
+                    <button type="submit" class="primary-btn" id="medicineSubmitBtn">
+                        Add Medicine
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+
+    <!-- Add Reminder Modal -->
+    <div class="modal-overlay" id="reminderModal">
+        <div class="modal">
+
+            <div class="modal-header">
+                <div>
+                    <span class="eyebrow">REMINDER</span>
+                    <h2>Add Reminder</h2>
+                </div>
+
+                <button class="close-btn" data-close-modal="reminderModal">×</button>
+            </div>
+
+            <form id="reminderForm">
+
+                <div class="form-group">
+                    <label for="reminderMedicine">Medicine</label>
+                    <select id="reminderMedicine">
+                        <option value="">Select Medicine</option>
+                    </select>
+                    <small class="field-error" id="reminderMedicineError"></small>
+                </div>
+
+                <div class="form-group">
+                    <label for="reminderDate">Reminder Date</label>
+                    <input type="date" id="reminderDate">
+                    <small class="field-error" id="reminderDateError"></small>
+                </div>
+
+                <div class="form-group">
+                    <label for="reminderTime">Reminder Time</label>
+
+                    <div class="time-input-group">
+                        <input
+                            type="text"
+                            id="reminderTime"
+                            placeholder="09:00"
+                            maxlength="5"
+                            inputmode="numeric"
+                        >
+
+                        <select id="reminderAmPm">
+                            <option value="AM">AM</option>
+                            <option value="PM">PM</option>
+                        </select>
+                    </div>
+
+                    <small class="form-help">Example: 09:00 AM, 02:30 PM</small>
+                    <small class="field-error" id="reminderTimeError"></small>
+                </div>
+
+                <div class="form-group">
+                    <label for="reminderType">Reminder Type</label>
+                    <select id="reminderType">
+                        <option value="Medicine">Medicine</option>
+                        <option value="Expiry">Expiry</option>
+                        <option value="General">General</option>
+                    </select>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="secondary-btn" data-close-modal="reminderModal">
+                        Cancel
+                    </button>
+
+                    <button type="submit" class="primary-btn">
+                        Add Reminder
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+
+    <!-- Scan Medicine Modal -->
+    <div class="modal-overlay" id="scanModal">
+        <div class="modal scan-modal">
+
+            <div class="modal-header">
+                <div>
+                    <span class="eyebrow">SCANNER</span>
+                    <h2>Scan Medicine</h2>
+                </div>
+
+                <button class="close-btn" data-close-modal="scanModal">×</button>
+            </div>
+
+            <div class="scan-content">
+                <div class="scan-icon">▣</div>
+                <h3>Scanner Coming Later</h3>
+                <p>
+                    Scan functionality will be connected to the
+                    backend/device scanner later.
+                </p>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="primary-btn" data-close-modal="scanModal">
+                    Close
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <span class="toast-icon">✓</span>
+        <span id="toastMessage">Success</span>
+    </div>
+
+
+    <script src="script.js"></script>
+</body>
+</html>
