@@ -710,15 +710,14 @@
 
                 <button class="close-btn" data-close-modal="scanModal">×</button>
             </div>
-
             <div class="scan-content">
-                <div class="scan-icon">▣</div>
-                <h3>Scanner Coming Later</h3>
-                <p>
-                    Scan functionality will be connected to the
-                    backend/device scanner later.
-                </p>
-            </div>
+    <div id="reader" style="width: 100%;"></div>
+
+    <p id="scanResult" style="margin-top: 15px;">
+        Point your camera at a QR code or barcode.
+    </p>
+</div>
+
 
             <div class="modal-actions">
                 <button type="button" class="primary-btn" data-close-modal="scanModal">
@@ -736,7 +735,7 @@
         <span id="toastMessage">Success</span>
     </div>
 
-
-    <script src="script.js"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="script.js"></script>
 </body>
 </html>

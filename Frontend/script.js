@@ -425,11 +425,83 @@ function setupMedicineEvents() {
             openAddMedicineModal();
         });
 
-    document
-        .getElementById("scanMedicineBtn")
-        .addEventListener("click", function () {
-            openModal("scanModal");
-        });
+   document
+    .getElementById("scanMedicineBtn")
+    .addEventListener("click", function () {
+
+        openModal("scanModal");
+
+        setTimeout(async function () {
+
+            if (typeof Html5Qrcode === "undefined") {
+                alert("Scanner library not loaded. Please refresh the page.");
+                return;
+            }
+
+            const readerElement =
+                document.getElementById("reader");
+
+            readerElement.innerHTML = "";
+
+            const scanner =
+                new Html5Qrcode("reader");
+
+            try {
+
+                const cameras =
+                    await Html5Qrcode.getCameras();
+
+                if (!cameras || cameras.length === 0) {
+                    alert("No camera found on this device.");
+                    return;
+                }
+
+                const cameraId = cameras[0].id;
+
+                await scanner.start(
+                    cameraId,
+                    {
+                        fps: 10,
+                       qrbox: {
+    width: 200,
+    height: 200
+}
+},
+function (decodedText) {
+
+                        document.getElementById(
+                            "scanResult"
+                        ).innerText =
+                            "Scanned: " + decodedText;
+
+                        console.log(
+                            "QR Code Scanned:",
+                            decodedText
+                        );
+
+                        scanner.stop()
+                            .catch(function () {});
+                    },
+
+                    function (errorMessage) {
+                        // Scanner is continuously looking for QR code.
+                    }
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Scanner error:",
+                    error
+                );
+
+                alert(
+                    "Could not start the camera scanner."
+                );
+            }
+
+        }, 500);
+    });
 
     document
         .getElementById("medicineSearch")
